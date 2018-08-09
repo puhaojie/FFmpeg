@@ -30,6 +30,8 @@ bool FFDemux::Open(const char *url) {
         return false;
     }
     totalMs = (int) ic->duration / (AV_TIME_BASE / 1000); //可能为0
+    GetVPara();
+    GetAPara();
     LOGI("totalMs %d", totalMs);
     return true;
 }
@@ -42,7 +44,7 @@ XData FFDemux::Read() {
     XData d;
     //读取帧数据
     AVPacket *pkt = av_packet_alloc();
-    AVFrame *frame = av_frame_alloc();
+
     int re = av_read_frame(ic, pkt);
     if (re != 0) {
         // 释放空间
@@ -52,6 +54,14 @@ XData FFDemux::Read() {
 
     d.data = (unsigned char *) pkt;
     d.size = pkt->size;
+    if (pkt->stream_index == audioStream){
+        d.isAudio = true;
+    } else if(pkt->stream_index == videoStream){
+        d.isAudio = false;
+    } else {
+        av_packet_free(&pkt);
+        return XData();
+    }
     return d;
 }
 
@@ -68,4 +78,38 @@ FFDemux::FFDemux() {
         avcodec_register_all();
         LOGE("register ffmpeg");
     }
+}
+
+// 获取视频参数
+XParameter FFDemux::GetVPara(){
+    if (!ic){
+        return XParameter();
+    }
+    // 获取视频流的索引
+    int re = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, 0, 0);
+    if (re < 0){
+        return XParameter();
+    }
+    LOGI("av_find_best_stream  GetVPara XParameter success %d",re);
+    videoStream = re;
+    XParameter para;
+    para.para = ic->streams[re]->codecpar;
+    return para;
+}
+
+// 获取音频参数
+XParameter FFDemux::GetAPara(){
+    if (!ic){
+        return XParameter();
+    }
+    // 获取音频流的索引
+    int re = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, 0, 0);
+    if (re < 0){
+        return XParameter();
+    }
+    audioStream = re;
+    LOGI("av_find_best_stream GetAPara XParameter success %d",re);
+    XParameter para;
+    para.para = ic->streams[re]->codecpar;
+    return para;
 }

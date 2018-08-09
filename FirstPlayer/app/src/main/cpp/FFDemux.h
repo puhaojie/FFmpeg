@@ -17,10 +17,18 @@ public:
     //读取一帧数据  数据由调用者清理
     virtual XData Read();
 
+    virtual XParameter GetVPara();
+
+    // 获取音频参数
+    virtual XParameter GetAPara();
+
     FFDemux();
 
 private:
     AVFormatContext *ic = 0; // c++11 的一个坑，与构造方法是否有无参数有关
+    // 对应的索引
+    int audioStream = 1;
+    int videoStream = 0;
 };
 
 

@@ -43,6 +43,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/XLog.cpp
              src/main/cpp/XThread.cpp
              src/main/cpp/IObserver.cpp
+             src/main/cpp/IDecode.cpp
+             src/main/cpp/FFDecode.cpp
+             src/main/cpp/XParameter.cpp
              )
 
 # Searches for a specified prebuilt library and stores the path as a
