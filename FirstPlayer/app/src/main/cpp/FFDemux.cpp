@@ -111,5 +111,7 @@ XParameter FFDemux::GetAPara(){
     LOGI("av_find_best_stream GetAPara XParameter success %d",re);
     XParameter para;
     para.para = ic->streams[re]->codecpar;
+    para.sample_rate = ic->streams[re]->codecpar->sample_rate;
+    para.channels = ic->streams[re]->codecpar->channels;
     return para;
 }
