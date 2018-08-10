@@ -11,6 +11,8 @@ public:
     virtual bool Init(void *win) = 0;
 
     static XEGL *Get();
+
+    virtual void Draw() = 0;
 protected:
     // 单例模式
     XEGL(){}
