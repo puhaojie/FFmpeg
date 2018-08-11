@@ -46,7 +46,7 @@ XData FFResample::Resample(XData indata)
     if(indata.size<=0 || !indata.data) return XData();
     if(!actx)
         return XData();
-    LOGE("indata size is %d",indata.size);
+//    LOGE("indata size is %d",indata.size);
     AVFrame *frame = (AVFrame *)indata.data;
 
     //输出空间的分配

@@ -6,15 +6,21 @@
 #define FIRSTPLAYER_IAUDIOPLAY_H
 
 
+#include <list>
 #include "IObserver.h"
 #include "XParameter.h"
 
 class IAudioPlay : public IObserver{
 public:
+    // 缓冲满之后阻塞
     virtual void Update(XData data);
 
     virtual bool StartPlay(XParameter out) = 0;
 
+    int maxFrame =100;// 最大缓冲
+protected:
+    std::list <XData> frames;// 缓冲队列
+    std::mutex framesMutex; //音频互斥队列
 };
 
 
