@@ -14,11 +14,12 @@ void XSleep(int mis) {
     this_thread::sleep_for(du);
 }
 
-void XThread::Start() {
+bool XThread::Start() {
     isExit = false;
     // 创建一个线程
     thread th(&XThread::ThreadMain, this);
     th.detach();//放弃对线程的控制
+    return true;
 }
 
 void XThread::ThreadMain() {
