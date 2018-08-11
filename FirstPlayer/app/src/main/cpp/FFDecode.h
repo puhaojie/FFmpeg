@@ -13,10 +13,11 @@ struct AVCodecContext;
 struct AVFrame;
 class FFDecode : public IDecode{
 public:
-    // 打开解码器
-    virtual bool Open(XParameter para);
+    // 硬解码的特有操作
+    static void InitHard(void *vm);
 
-//    virtual void Update(XData data);
+    // 打开解码器
+    virtual bool Open(XParameter para,bool isHard = false);
 
     //future模型
     //发送包到线程解码（不是立刻解码）

@@ -18,6 +18,7 @@ struct XData {
     bool isAudio = false; // 默认是视频
     int width = 0;
     int height = 0;
+    int format = 0; //软硬解码
     bool Alloc(int size,const char *data=0);
     // 清理工作
     void Drop();

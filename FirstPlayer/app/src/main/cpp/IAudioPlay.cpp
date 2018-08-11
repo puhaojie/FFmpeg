@@ -5,24 +5,41 @@
 #include "IAudioPlay.h"
 #include "XLog.h"
 
-void IAudioPlay::Update(XData data){
-    LOGE("IAudioPlay::Update data size %d",data.size);
-    // 压入到缓冲队列（类似视频）
-    if (data.size <= 0 || !data.data)
-        return;
+XData IAudioPlay::GetData()
+{
+    XData d;
 
-    while (!isExit){
+    while(!isExit)
+    {
         framesMutex.lock();
-        if (frames.size() > maxFrame)
+        if(!frames.empty())
+        {
+            d = frames.front();
+            frames.pop_front();
+            framesMutex.unlock();
+            return d;
+        }
+        framesMutex.unlock();
+        XSleep(1);
+    }
+    return d;
+}
+void IAudioPlay::Update(XData data)
+{
+//    LOGE("IAudioPlay::Update %d",data.size);
+    //压入缓冲队列
+    if(data.size<=0|| !data.data) return;
+    while(!isExit)
+    {
+        framesMutex.lock();
+        if(frames.size() > maxFrame)
         {
             framesMutex.unlock();
-            XSleep(2);
+            XSleep(1);
             continue;
         }
         frames.push_back(data);
         framesMutex.unlock();
         break;
     }
-
-
-};
+}

@@ -12,8 +12,8 @@
 // 解码接口 支持硬解码
 class IDecode : public IObserver {
 public:
-    // 打开解码器
-    virtual bool Open(XParameter para) = 0;
+    // 打开解码器 (默认不打开硬解码)
+    virtual bool Open(XParameter para,bool isHard = false) = 0;
 
     // 如果缓冲队列缓冲满了，则阻塞
     virtual void Update(XData data);

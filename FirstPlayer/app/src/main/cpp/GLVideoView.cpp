@@ -16,7 +16,7 @@ void GLVideoView::Render(XData data){
         return;
     if (!txt){
         txt = XTexture::Create();
-        txt->Init(view); // 第一次需要进行初始化
+        txt->Init(view, (XTextureType) data.format); // 第一次需要进行初始化
     }
     txt->Draw(data.datas,data.width,data.height);
 }
