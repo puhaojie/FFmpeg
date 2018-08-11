@@ -62,6 +62,7 @@ add_library( # Sets the name of the library.
 
              src/main/cpp/IPlayerBuilder.cpp
              src/main/cpp/FFPlayerBuilder.cpp
+             src/main/cpp/IPlayerProxy.cpp
              )
 
 # Searches for a specified prebuilt library and stores the path as a
