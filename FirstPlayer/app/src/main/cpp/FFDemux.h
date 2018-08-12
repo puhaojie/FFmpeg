@@ -18,6 +18,9 @@ public:
     //读取一帧数据  数据由调用者清理
     virtual XData Read();
 
+    //seek 位置 pos 0.0~1.0
+    virtual bool Seek(double pos);
+
     virtual XParameter GetVPara();
 
     // 获取音频参数

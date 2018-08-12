@@ -84,7 +84,7 @@ bool FFDecode::Open(XParameter para,bool isHard) {
 }
 
 // 发送包给线程解码
-bool FFDecode::SendPackage(XData pkt) {
+bool FFDecode::SendPacket(XData pkt) {
     if (pkt.size <= 0 || !pkt.data) return false;
     mux.lock();
     if (!codec) { // 可能存在多线程访问的现象

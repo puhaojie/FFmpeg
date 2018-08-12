@@ -14,8 +14,24 @@ void XSleep(int mis) {
     this_thread::sleep_for(du);
 }
 
+void XThread::SetPause(bool isP)
+{
+    isPause = isP;
+    //等待100毫秒
+    for(int i = 0; i < 10; i++)
+    {
+        if(isPausing == isP)
+        {
+            break;
+        }
+        XSleep(10);
+    }
+
+}
+
 bool XThread::Start() {
     isExit = false;
+    isPause = false;
     // 创建一个线程
     thread th(&XThread::ThreadMain, this);
     th.detach();//放弃对线程的控制

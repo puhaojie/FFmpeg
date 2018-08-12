@@ -54,7 +54,8 @@ void SLAudioPlay::PlayCall(void *bufq)
     }
     memcpy(buf,d.data,d.size);
     mux.lock();
-    (*bf)->Enqueue(bf,buf,d.size);
+    if (pcmQue && (*pcmQue))
+        (*pcmQue)->Enqueue(bf,buf,d.size);
     mux.unlock();
     d.Drop();
 
@@ -201,6 +202,7 @@ bool SLAudioPlay::StartPlay(XParameter out)
 
     //启动队列回调
     (*pcmQue)->Enqueue(pcmQue,"",1);
+    isExit = false;
     mux.unlock();
     LOGI("SLAudioPlay::StartPlay success!");
     return true;

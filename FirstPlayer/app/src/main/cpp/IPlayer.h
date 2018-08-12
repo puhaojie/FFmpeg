@@ -22,11 +22,14 @@ class IPlayer : public XThread{
 public:
     // 通过索引管理对象
     static IPlayer *Get(unsigned char index = 0);
-
+    //获取当前的播放进度 0.0 ~ 1.0
+    virtual double PlayPos();
     virtual bool Open(const char* path);
     virtual void Close();
-
+    virtual bool Seek(double pos);
     virtual bool Start();
+
+    virtual void SetPause(bool isB);
 
     virtual void InitView(void *win);
 

@@ -43,6 +43,10 @@ void IDecode::Clear()
 void IDecode::Main() {
 
     while (!isExit){
+        if (IsPause()){
+            XSleep(2);
+            continue;
+        }
         packsMutex.lock();
         // 判断音视频同步
         if (!isAudio && synPts > 0){
@@ -60,7 +64,7 @@ void IDecode::Main() {
         XData pack = packs.front();
         packs.pop_front();
         // 发送数据到解码线程
-        if (SendPackage(pack)){
+        if (SendPacket(pack)){
             // 获取解码数据 (一个数据包可能会解码出多个结果)
             while (!isExit){
                 XData frame = RecvFrame();

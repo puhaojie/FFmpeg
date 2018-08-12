@@ -17,8 +17,12 @@ public:
         static IPlayerProxy px;
         return &px;
     }
+    virtual double PlayPos();
+    virtual bool Seek(double pos);
     void Init(void *vm = 0);
     virtual void Close();
+    virtual bool IsPause();
+    virtual void SetPause(bool isB);
     virtual bool Open(const char *path);
     virtual bool Start();
     virtual void InitView(void *win);
