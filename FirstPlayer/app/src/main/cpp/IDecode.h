@@ -29,6 +29,9 @@ public:
 
     int maxList = 200; //设置缓冲队列中的最大数量
 
+    //同步时间，再次打开文件要清理
+    int synPts = 0;
+    int pts = 0;
 protected:
     virtual void Main();//入口函数
 

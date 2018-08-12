@@ -68,12 +68,36 @@ bool IPlayer::Start(){
         adecode->Start();
     if(audioPlay)
         audioPlay->StartPlay(outPara);
+    // 启动主线程
     XThread::Start();
     mux.unlock();
 
     return true;
 }
 
+
+void IPlayer::Main()
+{
+    while (!isExit)
+    {
+        mux.lock();
+        if(!audioPlay|| !vdecode)
+        {
+            mux.unlock();
+            XSleep(2);
+            continue;
+        }
+
+        //同步
+        //获取音频的pts 告诉视频
+        int apts = audioPlay->pts;
+        LOGE("apts = %d",apts);
+        vdecode->synPts = apts;
+
+        mux.unlock();
+        XSleep(2);
+    }
+}
 
 void IPlayer::InitView(void *win){
     if(videoView)

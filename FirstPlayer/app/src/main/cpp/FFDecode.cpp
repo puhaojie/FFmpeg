@@ -99,10 +99,12 @@ XData FFDecode::RecvFrame() {
         d.size = av_get_bytes_per_sample((AVSampleFormat) frame->format) * frame->nb_samples * 2; //样本字节数*单通道样本数*通道数
     }
     d.format = frame->format;
-    if (!isAudio)
-        LOGE("data format is %d",frame->format);
+//    if (!isAudio)
+//        LOGE("data format is %d",frame->format);
 
     memcpy(d.datas,frame->data, sizeof(d.datas));
+    // 开始传递pts
+    d.pts = frame->pts;
     return d;
 }
 

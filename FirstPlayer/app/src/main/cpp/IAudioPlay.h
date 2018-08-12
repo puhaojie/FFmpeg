@@ -21,6 +21,7 @@ public:
     virtual bool StartPlay(XParameter out) = 0;
 
     int maxFrame =100;// 最大缓冲
+    int pts = 0;
 protected:
     std::list <XData> frames;// 缓冲队列
     std::mutex framesMutex; //音频互斥队列
