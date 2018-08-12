@@ -11,9 +11,19 @@ extern "C"
 #include <libavcodec/avcodec.h>
 #include "FFResample.h"
 
+void FFResample::Close()
+{
+    mux.lock();
+    if(actx)
+    {
+        swr_free(&actx);
+    }
+    mux.unlock();
+}
 bool FFResample::Open(XParameter in,XParameter out)
 {
-
+    Close();
+    mux.lock();
     //音频重采样上下文初始化
     actx = swr_alloc();
     actx = swr_alloc_set_opts(actx,
@@ -25,7 +35,7 @@ bool FFResample::Open(XParameter in,XParameter out)
 
     int re = swr_init(actx);
     if(re != 0)
-    {
+    {  mux.unlock();
         LOGE("swr_init failed!");
         return false;
     }
@@ -36,16 +46,21 @@ bool FFResample::Open(XParameter in,XParameter out)
     // 成功了赋值
     outChannels = in.para->channels;
     outFormat = AV_SAMPLE_FMT_S16;
+    mux.unlock();
     return true;
 
 }
 
 XData FFResample::Resample(XData indata)
 {
+    mux.lock();
 //    LOGE("indata size is %d",indata.size);
     if(indata.size<=0 || !indata.data) return XData();
     if(!actx)
+    {
+        mux.unlock();
         return XData();
+    }
 //    LOGE("indata size is %d",indata.size);
     AVFrame *frame = (AVFrame *)indata.data;
 
@@ -61,8 +76,10 @@ XData FFResample::Resample(XData indata)
     if(len<=0)
     {
         out.Drop();
+        mux.unlock();
         return XData();
     }
+    mux.unlock();
     out.pts = indata.pts;
 //    LOGE("swr_convert success = %d",len);
     return out;

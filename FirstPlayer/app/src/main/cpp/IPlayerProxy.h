@@ -9,21 +9,21 @@
 
 #include "IPlayer.h"
 #include <mutex>
-class IPlayerPorxy: public IPlayer
+class IPlayerProxy: public IPlayer
 {
 public:
-    static IPlayerPorxy *Get()
+    static IPlayerProxy *Get()
     {
-        static IPlayerPorxy px;
+        static IPlayerProxy px;
         return &px;
     }
     void Init(void *vm = 0);
-
+    virtual void Close();
     virtual bool Open(const char *path);
     virtual bool Start();
     virtual void InitView(void *win);
 protected:
-    IPlayerPorxy(){}
+    IPlayerProxy(){}
     IPlayer *player = 0;
     std::mutex mux;
 };

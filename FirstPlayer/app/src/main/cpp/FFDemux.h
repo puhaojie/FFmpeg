@@ -5,7 +5,7 @@
 
 #ifndef FIRSTPLAYER_FFDEMUX_H
 #define FIRSTPLAYER_FFDEMUX_H
-
+using namespace std;
 
 #include "IDemux.h"
 struct AVFormatContext; // 直接使用声明
@@ -14,6 +14,7 @@ class FFDemux : public IDemux{
 public:
     //打开文件 或者流媒体
     virtual bool Open(const char *url);
+    virtual void Close();
     //读取一帧数据  数据由调用者清理
     virtual XData Read();
 
@@ -26,6 +27,7 @@ public:
 
 private:
     AVFormatContext *ic = 0; // c++11 的一个坑，与构造方法是否有无参数有关
+    std::mutex mux;
     // 对应的索引
     int audioStream = 1;
     int videoStream = 0;

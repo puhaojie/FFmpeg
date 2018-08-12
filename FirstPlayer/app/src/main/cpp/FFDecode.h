@@ -15,10 +15,10 @@ class FFDecode : public IDecode{
 public:
     // 硬解码的特有操作
     static void InitHard(void *vm);
-
+    virtual void Close();
     // 打开解码器
     virtual bool Open(XParameter para,bool isHard = false);
-
+    virtual void Clear();
     //future模型
     //发送包到线程解码（不是立刻解码）
     virtual bool SendPackage(XData pkt);
@@ -27,7 +27,7 @@ public:
     virtual XData RecvFrame();
 
 protected:
-
+    std::mutex mux;
     AVCodecContext *codec  = 0;
     AVFrame *frame = 0;
 };

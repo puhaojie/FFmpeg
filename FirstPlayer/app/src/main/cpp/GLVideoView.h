@@ -18,6 +18,8 @@ public:
 
     virtual void Render(XData data);
 
+    virtual void Close();
+
 protected:
     void * view = 0; // 窗体
     XTexture *txt = 0;

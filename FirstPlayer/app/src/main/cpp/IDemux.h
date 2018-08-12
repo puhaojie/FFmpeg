@@ -16,7 +16,7 @@ class IDemux : public IObserver
 public:
     //打开文件 或者流媒体
     virtual bool Open(const char *url) = 0; //后面加0 位程序函数 接口的定义
-
+    virtual void Close() = 0;
     // 获取视频参数
     virtual XParameter GetVPara() = 0;
 

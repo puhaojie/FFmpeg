@@ -24,6 +24,7 @@ public:
     static IPlayer *Get(unsigned char index = 0);
 
     virtual bool Open(const char* path);
+    virtual void Close();
 
     virtual bool Start();
 

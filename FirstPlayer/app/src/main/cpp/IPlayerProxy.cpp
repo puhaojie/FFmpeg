@@ -5,8 +5,14 @@
 
 #include "FFPlayerBuilder.h"
 #include "IPlayerProxy.h"
-
-void IPlayerPorxy::Init(void *vm) {
+void IPlayerProxy::Close()
+{
+    mux.lock();
+    if(player)
+        player->Close();
+    mux.unlock();
+}
+void IPlayerProxy::Init(void *vm) {
     mux.lock();
     if (vm) {
         FFPlayerBuilder::InitHard(vm);
@@ -18,7 +24,7 @@ void IPlayerPorxy::Init(void *vm) {
 }
 
 
-bool IPlayerPorxy::Open(const char *path) {
+bool IPlayerProxy::Open(const char *path) {
     bool re = false;
     mux.lock();
     if (player) {
@@ -30,7 +36,7 @@ bool IPlayerPorxy::Open(const char *path) {
     return re;
 }
 
-bool IPlayerPorxy::Start() {
+bool IPlayerProxy::Start() {
     bool re = false;
     mux.lock();
     if (player)
@@ -39,7 +45,7 @@ bool IPlayerPorxy::Start() {
     return re;
 }
 
-void IPlayerPorxy::InitView(void *win) {
+void IPlayerProxy::InitView(void *win) {
     mux.lock();
     if (player)
         player->InitView(win);

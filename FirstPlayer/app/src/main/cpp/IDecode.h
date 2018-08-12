@@ -17,7 +17,8 @@ public:
 
     // 如果缓冲队列缓冲满了，则阻塞
     virtual void Update(XData data);
-
+    virtual void Close() = 0;
+    virtual void Clear();
     //future模型
     //发送包到线程解码（不是立刻解码）
     virtual bool SendPackage(XData pkt) = 0;

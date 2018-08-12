@@ -12,9 +12,33 @@ void FFDecode::InitHard(void *vm) {
     av_jni_set_java_vm(vm,0);
 }
 
+void FFDecode::Clear()
+{
+    IDecode::Clear();
+    mux.lock();
+    if(codec)
+        avcodec_flush_buffers(codec);
+    mux.unlock();
+}
+
+void FFDecode::Close()
+{
+//    IDecode::Clear();
+    mux.lock();
+    pts = 0;
+    if(frame)
+        av_frame_free(&frame);
+    if(codec)
+    {
+        avcodec_close(codec);
+        avcodec_free_context(&codec);
+    }
+    mux.unlock();
+}
+
 // 打开解码器
 bool FFDecode::Open(XParameter para,bool isHard) {
-
+    Close();
     if (!para.para) return false;
     AVCodecParameters *p = para.para;
 
@@ -36,12 +60,14 @@ bool FFDecode::Open(XParameter para,bool isHard) {
     }
     //2、创建解码上下文
     //解码器初始化
+    mux.lock();
     codec = avcodec_alloc_context3(cd);
     // 复制参数
     avcodec_parameters_to_context(codec, p);
     codec->thread_count = 8; //8线程解码
     int re = avcodec_open2(codec, 0, 0);
     if (re != 0) {
+        mux.unlock();
         char buf[1024] = {0};
         av_strerror(re, buf, sizeof(buf) - 1);
         LOGE("avcodec_open2 failed");
@@ -52,6 +78,7 @@ bool FFDecode::Open(XParameter para,bool isHard) {
     } else if (codec->codec_type == AVMEDIA_TYPE_AUDIO){
         isAudio = true;
     }
+    mux.unlock();
     LOGI("avcodec_open2  success；isAudio = %d",isAudio);
     return true;
 }
@@ -59,11 +86,13 @@ bool FFDecode::Open(XParameter para,bool isHard) {
 // 发送包给线程解码
 bool FFDecode::SendPackage(XData pkt) {
     if (pkt.size <= 0 || !pkt.data) return false;
-
+    mux.lock();
     if (!codec) { // 可能存在多线程访问的现象
+        mux.unlock();
         return false;
     }
     int re = avcodec_send_packet(codec, (const AVPacket *) pkt.data);
+    mux.unlock();
     if (re != 0) {
         LOGE("avcodec_send_packet failed");
         return false;
@@ -73,7 +102,9 @@ bool FFDecode::SendPackage(XData pkt) {
 
 //从线程中获取解码结果
 XData FFDecode::RecvFrame() {
+    mux.lock();
     if (!codec) { // 可能存在多线程访问的现象
+        mux.unlock();
         return XData();
     }
     if (!frame) { // frame作为成员变量
@@ -82,6 +113,7 @@ XData FFDecode::RecvFrame() {
 
     int re = avcodec_receive_frame(codec, frame);
     if (re != 0) {
+        mux.unlock();
 //        char buf[1024] = {0};
 //        av_strerror(re,buf, sizeof(buf)-1);
 //        LOGE("avcodec_receive_frame failed %d %s",re,buf);
@@ -105,6 +137,8 @@ XData FFDecode::RecvFrame() {
     memcpy(d.datas,frame->data, sizeof(d.datas));
     // 开始传递pts
     d.pts = frame->pts;
+    pts = d.pts;
+    mux.unlock();
     return d;
 }
 
